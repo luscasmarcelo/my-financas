@@ -5,8 +5,8 @@ const DespesasSchema = new mongoose.Schema({
     valor: { type: Number, required: true},
     descricao: { type: String},
     data: { type: Date, default: Date.now},
-    usuarioId: { type: String, required: true}
+    usuarioId: { type: String, required: true},
+    mes: { type: String, required: true}
 });
 
-const Despesa = mongoose.model('Despesa', DespesasSchema);
-export default Despesa;
+export default mongoose.model('Despesa', DespesasSchema);

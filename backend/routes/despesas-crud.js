@@ -14,13 +14,22 @@ router.post('/', async (req, res) => {
 });
 
 //Listar todas as despesas de um usuário
-router.get('/:usuarioId', async (req, res) => {
+router.get('/:usuarioId/', async (req, res) => {
     try {
-        const despesas = await Despesa.find({ usuarioId: req.params.usuarioId });
+        const despesas = await Despesa.find({ usuarioId: req.params.usuarioId});
         res.json(despesas);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
+});
+
+router.get('/:usuarioId/:mes', async (req, res) => {
+  try {
+    const despesas = await Despesa.find({ usuarioId: req.params.usuarioId, mes: req.params.mes });
+    res.json(despesas);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 //Atualizar uma despesa
