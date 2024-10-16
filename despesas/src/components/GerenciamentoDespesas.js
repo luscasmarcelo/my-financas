@@ -22,10 +22,15 @@ const GerenciamentoDespesas = ({ usuarioId }) => {
   }, [usuarioId, mesSelecionado]);
 
   const handleCreateDespesa = async () => {
+    if (!novaDespesa.categoria || !novaDespesa.valor) {
+      alert('Por favor, preencha todos os campos.');
+      return;
+    }
     try {
       const response = await createDespesa({ ...novaDespesa, usuarioId, mes: mesSelecionado });
       setDespesas([...despesas, response.data]);
       setNovaDespesa({ categoria: '', valor: '', descricao: '' });
+      alert('Despesa adicionada com sucesso!')
     } catch (error) {
       console.error('Erro ao criar despesa:', error);
     }
@@ -35,6 +40,7 @@ const GerenciamentoDespesas = ({ usuarioId }) => {
     try {
       const response = await updateDespesa(id, despesaAtualizada);
       setDespesas(despesas.map((despesa) => (despesa._id === id ? response.data : despesa)));
+      alert("Despesa atualizada com sucesso!")
     } catch (error) {
       console.error('Erro ao atualizar despesa:', error);
     }
@@ -44,6 +50,7 @@ const GerenciamentoDespesas = ({ usuarioId }) => {
     try {
       await deleteDespesa(id);
       setDespesas(despesas.filter((despesa) => despesa._id !== id));
+      alert("Despesa deletada com sucesso!")
     } catch (error) {
       console.error('Erro ao deletar despesa:', error);
     }
@@ -103,9 +110,7 @@ const GerenciamentoDespesas = ({ usuarioId }) => {
             <p>Categoria: {despesa.categoria}</p>
             <p>Valor: {despesa.valor}</p>
             <p>Descrição: {despesa.descricao}</p>
-            <button onClick={() => handleUpdateDespesa(despesa._id, { ...despesa, valor: despesa.valor + 10 })}>
-              Editar
-            </button>
+            <button onClick={() => handleUpdateDespesa(despesa._id, { ...despesa, valor: despesa.valor + 10 })}>Editar</button>
             <button onClick={() => handleDeleteDespesa(despesa._id)}>Deletar</button>
           </div>
         ))}

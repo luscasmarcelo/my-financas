@@ -3,10 +3,20 @@ import React, { useState } from 'react';
 const CadastroSalarioMes = ({ onSave}) => {
     const [salario, setSalario] = useState(0);
     const [mes, setMes] = useState('');
+    const [error, setError] = useState('');
 
     const handleSave = (e) => {
         e.preventDefault();
-        onSave({ salario, mes});
+        if (salario <= 0) {
+            setError('Por favor, insira um valor válido.');
+            return;
+        } if (!mes) {
+            setError('Por favor, selecione um mês.');
+            return;
+        }
+
+        setError('');
+        onSave({salario, mes});
     };
 
     return (
@@ -37,6 +47,7 @@ const CadastroSalarioMes = ({ onSave}) => {
                 </select>
                 <button type="submit">Salvar</button>
             </form>
+            {error && <p style={{color: 'red' }}>{error}</p>}
         </div>
     );
 };
