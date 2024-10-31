@@ -21,7 +21,7 @@ const CadastroSalarioMes = ({ onSave}) => {
 
     return (
         <div>
-            <h2>Cadastro de salário e mês</h2>
+            <h2>Insira seu salário e o mês correspondente</h2>
             <form onSubmit={handleSave}>
                 <input
                     type="number"

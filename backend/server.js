@@ -21,8 +21,7 @@ app.get('/', (req, res) => {
     res.send('Backend funcionando!');
 });
 
-/*import despesasCrudRouter from './routes/despesas-crud.js'
-app.use('/despesas', despesasCrudRouter);*/
+
 app.use('/despesas', despesasCrudRouter);
 
 app.listen(PORT, () => {

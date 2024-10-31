@@ -1,4 +1,4 @@
-// despesas/src/components/GerenciamentoDespesas.js
+
 import React, { useState, useEffect } from 'react';
 import { getDespesas, createDespesa, updateDespesa, deleteDespesa } from '../services/api';
 import CadastroSalarioMes from './CadastroSalarioMes';

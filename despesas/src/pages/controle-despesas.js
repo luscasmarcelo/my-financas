@@ -4,7 +4,7 @@ import GerenciamentoDespesas from '../components/GerenciamentoDespesas';
 const ControleDespesasPage = () => {
   return (
     <div>
-      <h1>Controle de Despesas</h1>
+      <h1>MY FINANÇAS</h1>
       <GerenciamentoDespesas usuarioId="usuario-exemplo" />
     </div>
   );
