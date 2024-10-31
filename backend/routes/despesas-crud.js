@@ -1,5 +1,6 @@
 import express from 'express';
 import Despesa from '../models/Despesa.js';
+
 const router = express.Router();
 
 //Criar uma nova despesa
@@ -13,23 +14,19 @@ router.post('/', async (req, res) => {
     }
 });
 
-//Listar todas as despesas de um usuário
-router.get('/:usuarioId/', async (req, res) => {
+//Listar todas as despesas de um usuário, com filtro opcional de mes
+router.get('/:usuarioId/:mes?', async (req, res) => {
+  const { usuarioId, mes } = req.params;
     try {
-        const despesas = await Despesa.find({ usuarioId: req.params.usuarioId});
+      let query = { usuarioId };
+      if (mes) {
+        query.mes = mes;
+      }
+        const despesas = await Despesa.find(query);
         res.json(despesas);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: 'Erro ao buscar despesas', error: error.message });
     }
-});
-
-router.get('/:usuarioId/:mes', async (req, res) => {
-  try {
-    const despesas = await Despesa.find({ usuarioId: req.params.usuarioId, mes: req.params.mes });
-    res.json(despesas);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
 });
 
 //Atualizar uma despesa

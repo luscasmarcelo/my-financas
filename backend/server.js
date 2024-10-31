@@ -1,6 +1,7 @@
 import express from 'express';
-import mongoose, { mongo } from 'mongoose';
+import mongoose from 'mongoose';
 import cors from 'cors';
+import despesasCrudRouter from './routes/despesas-crud.js';
 
 const app = express();
 const PORT = 5000;
@@ -20,7 +21,8 @@ app.get('/', (req, res) => {
     res.send('Backend funcionando!');
 });
 
-import despesasCrudRouter from './routes/despesas-crud.js'
+/*import despesasCrudRouter from './routes/despesas-crud.js'
+app.use('/despesas', despesasCrudRouter);*/
 app.use('/despesas', despesasCrudRouter);
 
 app.listen(PORT, () => {

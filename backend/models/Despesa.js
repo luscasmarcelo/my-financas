@@ -6,7 +6,7 @@ const DespesasSchema = new mongoose.Schema({
     descricao: { type: String},
     data: { type: Date, default: Date.now},
     usuarioId: { type: String, required: true},
-    mes: { type: String, required: true}
+    mes: { type: String, required: true},
 });
 
 export default mongoose.model('Despesa', DespesasSchema);

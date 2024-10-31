@@ -9,5 +9,5 @@ const ControleDespesasPage = () => {
     </div>
   );
 };
-
+console.log("Aplicação carregada")
 export default ControleDespesasPage;

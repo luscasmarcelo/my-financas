@@ -5,30 +5,41 @@ import CadastroSalarioMes from './CadastroSalarioMes';
 
 const GerenciamentoDespesas = ({ usuarioId }) => {
   const [despesas, setDespesas] = useState([]);
-  const [mesSelecionado, setMesSelecionado] = useState('');
+  const [mesSalario, setMesSalario] = useState('');
+  const [filtroMes, setFiltroMes] = useState('');
   const [novaDespesa, setNovaDespesa] = useState({ categoria: '', valor: '', descricao: '' });
   const [despesaEdicao, setDespesaEdicao] = useState(null);
 
+  const handleSalvarSalarioMes = (data) => {
+    setMesSalario(data.mes);
+  }
+
+  //função para buscar despesas com base no mês selecionado
   const fetchDespesas = async () => {
     try {
-      const response = await getDespesas(usuarioId);
+      console.log('Buscando despesas para o mês:', filtroMes);
+      const response = await getDespesas(usuarioId, filtroMes);
       setDespesas(response.data);
     } catch (error) {
       console.error('Erro ao buscar despesas:', error);
     }
   };
 
+  //atualiza as despesas quando o mês é selecionado
   useEffect(() => {
-    fetchDespesas();
-  }, [usuarioId, mesSelecionado]);
+    if (filtroMes) {
+      fetchDespesas();
+    }
+  }, [usuarioId, filtroMes]);
 
+  //funcão de criação de nova despesa
   const handleCreateDespesa = async () => {
     if (!novaDespesa.categoria || !novaDespesa.valor) {
       alert('Por favor, preencha todos os campos.');
       return;
     }
     try {
-      const response = await createDespesa({ ...novaDespesa, usuarioId, mes: mesSelecionado });
+      const response = await createDespesa({ ...novaDespesa, usuarioId, mes: mesSalario });
       setDespesas([...despesas, response.data]);
       setNovaDespesa({ categoria: '', valor: '', descricao: '' });
       alert('Despesa adicionada com sucesso!')
@@ -65,12 +76,13 @@ const GerenciamentoDespesas = ({ usuarioId }) => {
 
   return (
     <div>
-      <CadastroSalarioMes onSave={(data) => console.log(data)} />
+      <CadastroSalarioMes onSave={handleSalvarSalarioMes} />
       <h2>Gerenciamento de Despesas</h2>
+      <h3>Consultar lista de despesas por mês:</h3>
       
       {/* Filtro de Mês */}
-      <select onChange={(e) => setMesSelecionado(e.target.value)}>
-        <option value="">Selecione o Mês</option>
+      <select onChange={(e) => setFiltroMes(e.target.value)} value={filtroMes}>
+        <option value="">Selecione o mês</option>
         <option value="Janeiro">Janeiro</option>
         <option value="Fevereiro">Fevereiro</option>
         <option value="Março">Março</option>
@@ -90,7 +102,7 @@ const GerenciamentoDespesas = ({ usuarioId }) => {
         <h3>Adicionar Nova Despesa</h3>
         <input
           type="text"
-          placeholder="Categoria"
+          placeholder="Categoria: Lazer, Comida, Transporte etc..."
           value={novaDespesa.categoria}
           onChange={(e) => setNovaDespesa({ ...novaDespesa, categoria: e.target.value })}
         />
@@ -124,15 +136,19 @@ const GerenciamentoDespesas = ({ usuarioId }) => {
       {/* Lista de Despesas */}
       <div>
         <h3>Despesas</h3>
-        {despesas.map((despesa) => (
-          <div key={despesa._id}>
-            <p>Categoria: {despesa.categoria}</p>
-            <p>Valor: {despesa.valor}</p>
-            <p>Descrição: {despesa.descricao}</p>
-            <button onClick={() => startEditing(despesa)}>Editar</button>
-            <button onClick={() => handleDeleteDespesa(despesa._id)}>Deletar</button>
-          </div>
-        ))}
+        {despesas.length > 0 ? (
+          despesas.map((despesa) => (
+            <div key={despesa._id}>
+              <p>Categoria: {despesa.categoria}</p>
+              <p>Valor: {despesa.valor}</p>
+              <p>Descrição: {despesa.descricao}</p>
+              <button onClick={() => startEditing(despesa)}>Editar</button>
+              <button onClick={() => handleDeleteDespesa(despesa._id)}>Deletar</button>
+            </div>
+          ))
+        ) : (
+          <p>Nenhuma despesa encontrada para o mês selecionado.</p>
+        )}
       </div>
     </div>
   );
