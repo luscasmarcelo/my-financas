@@ -9,9 +9,16 @@ const GerenciamentoDespesas = ({ usuarioId }) => {
   const [filtroMes, setFiltroMes] = useState('');
   const [novaDespesa, setNovaDespesa] = useState({ categoria: '', valor: '', descricao: '' });
   const [despesaEdicao, setDespesaEdicao] = useState(null);
+  const [salario, setSalario] = useState(0);
 
   const handleSalvarSalarioMes = (data) => {
     setMesSalario(data.mes);
+    setSalario(data.salario);
+  }
+
+  const calcularSaldoMensal = (salario, despesas) => {
+    const totalDespesas = despesas.reduce((total, despesa) => total + Number(despesa.valor), 0);
+    return salario - totalDespesas;
   }
 
   //função para buscar despesas com base no mês selecionado
@@ -24,6 +31,14 @@ const GerenciamentoDespesas = ({ usuarioId }) => {
       console.error('Erro ao buscar despesas:', error);
     }
   };
+
+  //relatorio mensal por categoria
+  const agruparDespesasPorCategoria = (despesas) => {
+    return despesas.reduce((acumulador, despesa) => {
+      acumulador[despesa.categoria] = (acumulador[despesa.categoria] || 0) + Number(despesa.valor);
+      return acumulador;
+    }, {});
+  }
 
   //atualiza as despesas quando o mês é selecionado
   useEffect(() => {
@@ -74,28 +89,25 @@ const GerenciamentoDespesas = ({ usuarioId }) => {
     }
   };
 
+  const handleResetMensal = () => {
+    const confirmacaoDel = window.confirm("Tem certeza que deseja resetar as despesas para este mês?");
+    if (!confirmacaoDel) return;
+
+    setDespesas([]);
+    alert("Despesas do mês foram resetadas com sucesso!");
+  }
+
+  const saldoMensal = calcularSaldoMensal(salario, despesas);
+  const categoriasTotais = agruparDespesasPorCategoria(despesas);
+
   return (
     <div>
       <CadastroSalarioMes onSave={handleSalvarSalarioMes} />
       <h2>Gerenciamento de Despesas</h2>
-      <h3>Consultar lista de despesas por mês:</h3>
       
-      {/* Filtro de Mês */}
-      <select onChange={(e) => setFiltroMes(e.target.value)} value={filtroMes}>
-        <option value="">Selecione o mês</option>
-        <option value="Janeiro">Janeiro</option>
-        <option value="Fevereiro">Fevereiro</option>
-        <option value="Março">Março</option>
-        <option value="Abril">Abril</option>
-        <option value="Maio">Maio</option>
-        <option value="Junho">Junho</option>
-        <option value="Julho">Julho</option>
-        <option value="Agosto">Agosto</option>
-        <option value="Setembro">Setembro</option>
-        <option value="Outubro">Outubro</option>
-        <option value="Novembro">Novembro</option>
-        <option value="Dezembro">Dezembro</option>
-      </select>
+      <div className={`saldo-mensal ${saldoMensal < 0 ? 'negativo' : 'positivo'}`}>
+        Saldo do mês {filtroMes}: R$ {saldoMensal} de um capital de R$ {salario}
+      </div>
 
       {/* Formulário para Adicionar Nova Despesa */}
       <div>
@@ -121,6 +133,25 @@ const GerenciamentoDespesas = ({ usuarioId }) => {
         <button onClick={handleCreateDespesa}>Adicionar Despesa</button>
       </div>
 
+      <h3>Consultar lista de despesas por mês:</h3>
+      
+      {/* Filtro de Mês */}
+      <select onChange={(e) => setFiltroMes(e.target.value)} value={filtroMes}>
+        <option value="">Selecione o mês</option>
+        <option value="Janeiro">Janeiro</option>
+        <option value="Fevereiro">Fevereiro</option>
+        <option value="Março">Março</option>
+        <option value="Abril">Abril</option>
+        <option value="Maio">Maio</option>
+        <option value="Junho">Junho</option>
+        <option value="Julho">Julho</option>
+        <option value="Agosto">Agosto</option>
+        <option value="Setembro">Setembro</option>
+        <option value="Outubro">Outubro</option>
+        <option value="Novembro">Novembro</option>
+        <option value="Dezembro">Dezembro</option>
+      </select>
+
       {despesaEdicao && (
         <div>
           <h3>Editar Despesa</h3>
@@ -132,10 +163,23 @@ const GerenciamentoDespesas = ({ usuarioId }) => {
           <button onClick={() => setDespesaEdicao(null)}>Cancelar</button>
         </div>
       )}
+    
+    <button onClick={handleResetMensal} className='reset-button'>Resetar mês</button>
+
+    <div className='relatorio-mensal'>
+      <h3>Relatório de Despesas por categoria - {filtroMes}</h3>
+      <ul>
+        {Object.entries(categoriasTotais).map(([categoria, total]) => (
+          <li key={categoria}>
+            {categoria}: R$ {total}
+          </li>
+        ))}
+      </ul>
+    </div>
 
       {/* Lista de Despesas */}
       <div>
-        <h3>Despesas</h3>
+        <h3>Lista de Despesas</h3>
         {despesas.length > 0 ? (
           despesas.map((despesa) => (
             <div key={despesa._id}>

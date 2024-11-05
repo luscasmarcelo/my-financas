@@ -19,3 +19,43 @@ p {
     color: red;
     font-weight: bold;
 }
+
+.saldo-mensal {
+    font-size: 1.2em;
+    margin: 10px 0;
+    font-weight: bold;
+}
+
+.saldo-mensal.negativo {
+    color: red;
+}
+
+.saldo-mensal.positivo {
+    color: green;
+}
+
+.reset-button {
+    background-color: blueviolet;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.relatorio-mensal {
+    margin-top: 20px;
+}
+
+.relatorio-mensal ul {
+    list-style: none;
+    padding: 0;
+}
+
+.relatorio-mensal li {
+    font-size: 1.1em;
+    color: #333;
+    margin: 5px;
+}
