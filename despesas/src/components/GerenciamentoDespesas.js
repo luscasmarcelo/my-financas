@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { getDespesas, createDespesa, updateDespesa, deleteDespesa } from '../services/api';
+import api, { getDespesas, createDespesa, updateDespesa, deleteDespesa } from '../services/api';
 import CadastroSalarioMes from './CadastroSalarioMes';
 
 const GerenciamentoDespesas = ({ usuarioId }) => {
@@ -11,9 +11,15 @@ const GerenciamentoDespesas = ({ usuarioId }) => {
   const [despesaEdicao, setDespesaEdicao] = useState(null);
   const [salario, setSalario] = useState(0);
 
-  const handleSalvarSalarioMes = (data) => {
+  const handleSalvarSalarioMes = async (data) => {
     setMesSalario(data.mes);
     setSalario(data.salario);
+
+    try {
+      await api.post('/salarioMes', { usuarioId, mes: data.mes, salario: data.salario});
+    } catch (error) {
+      console.error('Erro ao salvar salário e mês:', error);
+    }
   }
 
   const calcularSaldoMensal = (salario, despesas) => {
@@ -42,7 +48,21 @@ const GerenciamentoDespesas = ({ usuarioId }) => {
 
   //atualiza as despesas quando o mês é selecionado
   useEffect(() => {
+    console.log(`usuarioId: ${usuarioId}, filtroMes: ${filtroMes}`);
+    const fetchSalarioMes = async () => {
+      try {
+        const response = await api.get(`/salarioMes/${usuarioId}/${filtroMes}`);
+        if (response.data) {
+          setMesSalario(response.data.mes);
+          setSalario(response.data.salario);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar salário e mês:', error);
+      }
+    };
+    
     if (filtroMes) {
+      fetchSalarioMes();
       fetchDespesas();
     }
   }, [usuarioId, filtroMes]);

@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import despesasCrudRouter from './routes/despesas-crud.js';
+import salarioMesRouter from './routes/salarioMes-crud.js';
 
 const app = express();
 const PORT = 5000;
@@ -23,6 +24,7 @@ app.get('/', (req, res) => {
 
 
 app.use('/despesas', despesasCrudRouter);
+app.use('/salarioMes', salarioMesRouter);
 
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
