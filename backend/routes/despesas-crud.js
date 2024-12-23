@@ -8,8 +8,8 @@ router.post('/', async (req, res) => {
   const { usuarioId, mes, categoria, valor, descricao } = req.body;
 
   // Validação de campos obrigatórios
-  if (!usuarioId || !mes || !categoria || !valor) {
-    return res.status(400).json({ message: 'Campos obrigatórios não preenchidos.' });
+  if (!usuarioId || !mes || !categoria || !valor || isNaN(valor) || valor <= 0) {
+    return res.status(400).json({ message: 'Campos obrigatórios não preenchidos ou inválidos.' });
   }
 
   try {

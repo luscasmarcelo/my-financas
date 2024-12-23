@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import api, { getDespesas, createDespesa, updateDespesa, deleteDespesa } from '../services/api';
 import CadastroSalarioMes from './CadastroSalarioMes';
 
+
 const GerenciamentoDespesas = ({ usuarioId }) => {
   const [despesas, setDespesas] = useState([]);
   const [mesSalario, setMesSalario] = useState('');
@@ -10,6 +11,8 @@ const GerenciamentoDespesas = ({ usuarioId }) => {
   const [novaDespesa, setNovaDespesa] = useState({ categoria: '', valor: '', descricao: '' });
   const [despesaEdicao, setDespesaEdicao] = useState(null);
   const [salario, setSalario] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleSalvarSalarioMes = async (data) => {
     setMesSalario(data.mes);
@@ -29,12 +32,17 @@ const GerenciamentoDespesas = ({ usuarioId }) => {
 
   //função para buscar despesas com base no mês selecionado
   const fetchDespesas = async () => {
+    setLoading(true);
+    setError(null);
     try {
       console.log('Buscando despesas para o mês:', filtroMes);
       const response = await getDespesas(usuarioId, filtroMes);
       setDespesas(response.data);
     } catch (error) {
+      setError('Erro ao buscar despesas.');
       console.error('Erro ao buscar despesas:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,8 +77,8 @@ const GerenciamentoDespesas = ({ usuarioId }) => {
 
   //funcão de criação de nova despesa
   const handleCreateDespesa = async () => {
-    if (!novaDespesa.categoria || !novaDespesa.valor) {
-      alert('Por favor, preencha todos os campos.');
+    if (!novaDespesa.categoria || !novaDespesa.valor || isNaN(novaDespesa.valor) || novaDespesa.valor <= 0) {
+      alert('Por favor, insira uma categoria válida e um valor maior que 0.');
       return;
     }
     try {
@@ -124,6 +132,9 @@ const GerenciamentoDespesas = ({ usuarioId }) => {
     <div>
       <CadastroSalarioMes onSave={handleSalvarSalarioMes} />
       <h2>Gerenciamento de Despesas</h2>
+
+      {loading && <p>Carregando...</p>}
+      {error && <p className='error'>{error}</p>}
       
       <div className={`saldo-mensal ${saldoMensal < 0 ? 'negativo' : 'positivo'}`}>
         Saldo do mês {filtroMes}: R$ {saldoMensal} de um capital de R$ {salario}
