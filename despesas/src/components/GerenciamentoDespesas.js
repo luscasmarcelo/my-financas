@@ -1,7 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import api, { getDespesas, createDespesa, updateDespesa, deleteDespesa } from '../services/api';
 import CadastroSalarioMes from './CadastroSalarioMes';
+
 
 
 const GerenciamentoDespesas = ({ usuarioId }) => {
